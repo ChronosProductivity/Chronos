@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>CHRONOS CORE</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Orbitron', sans-serif;
+  background: radial-gradient(circle at top, #0b0f2b, #02020a);
+  color: #e6e6ff;
+  overflow: hidden;
+}
+
+canvas {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+}
+
+.panel {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 20px;
+  padding: 40px;
+}
+
+.card {
+  background: rgba(20, 20, 40, 0.6);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 16px;
+  padding: 25px;
+  text-align: center;
+  box-shadow: 0 0 20px rgba(140,180,255,0.15);
+}
+
+h1 {
+  grid-column: 1 / -1;
+  font-size: 3.5rem;
+  letter-spacing: 6px;
+  color: #8be9fd;
+  text-shadow: 0 0 25px #4dabf7;
+}
+
+.value {
+  font-size: 2rem;
+  margin-top: 10px;
+}
+
+.small {
+  opacity: 0.7;
+  font-size: 0.9rem;
+}
+
+button {
+  margin-top: 15px;
+  padding: 10px 22px;
+  border-radius: 30px;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  background: linear-gradient(135deg, #5c7cfa, #9775fa);
+  color: white;
+  box-shadow: 0 0 20px #5c7cfa88;
+}
+
+button:hover {
+  transform: scale(1.05);
+}
+
+footer {
+  grid-column: 1 / -1;
+  text-align: center;
+  opacity: 0.4;
+  font-size: 0.8rem;
+}
+</style>
+</head>
+
+<body>
+
+<canvas id="bg"></canvas>
+
+<div class="panel">
+  <h1>CHRONOS</h1>
+
+  <div class="card">
+    <div class="small">CURRENT TIME</div>
+    <div class="value" id="time">--:--:--</div>
+    <div class="small" id="date">----</div>
+  </div>
+
+  <div class="card">
+    <div class="small">SYSTEM STATUS</div>
+    <div class="value" id="status">OPTIMAL</div>
+    <div class="small" id="power">Power: 100%</div>
+  </div>
+
+  <div class="card">
+    <div class="small">FOCUS DIRECTIVE</div>
+    <div class="value" id="mission">INITIALIZING…</div>
+    <button onclick="newMission()">NEW DIRECTIVE</button>
+  </div>
+
+  <div class="card">
+    <div class="small">THOUGHT STREAM</div>
+    <div class="value" id="quote">—</div>
+    <button onclick="newQuote()">REFRESH</button>
+  </div>
+
+  <div class="card">
+    <div class="small">MODE</div>
+    <div class="value" id="mode">STANDARD</div>
+    <button onclick="toggleMode()">TOGGLE MODE</button>
+  </div>
+
+  <footer>© 2026 CHRONOS CORE</footer>
+</div>
+
+<script>
+/* TIME + DATE */
+function updateTime() {
+  const now = new Date();
+  document.getElementById("time").textContent =
+    now.toLocaleTimeString();
+  document.getElementById("date").textContent =
+    now.toDateString();
+}
+setInterval(updateTime, 1000);
+updateTime();
+
+/* SYSTEM STATUS */
+let power = 100;
+setInterval(() => {
+  power = Math.max(70, power - Math.random());
+  document.getElementById("power").textContent =
+    "Power: " + power.toFixed(0) + "%";
+}, 2000);
+
+/* MISSIONS */
+const missions = [
+  "ELIMINATE DISTRACTIONS",
+  "BUILD SOMETHING REAL",
+  "LEARN ONE NEW SKILL",
+  "FOCUS FOR 25 MINUTES",
+  "WRITE. EVEN IF BAD.",
+  "MOVE YOUR BODY",
+  "SHIP SOMETHING TODAY"
+];
+
+function newMission() {
+  document.getElementById("mission").textContent =
+    missions[Math.floor(Math.random() * missions.length)];
+}
+newMission();
+
+/* QUOTES */
+const quotes = [
+  "Time reveals all things.",
+  "Discipline is freedom.",
+  "Create more than you consume.",
+  "You are ahead of schedule.",
+  "Small actions compound."
+];
+
+function newQuote() {
+  document.getElementById("quote").textContent =
+    quotes[Math.floor(Math.random() * quotes.length)];
+}
+newQuote();
+
+/* MODE TOGGLE */
+let dark = false;
+function toggleMode() {
+  dark = !dark;
+  document.body.style.background = dark
+    ? "radial-gradient(circle, #2b0b0b, #050505)"
+    : "radial-gradient(circle at top, #0b0f2b, #02020a)";
+  document.getElementById("mode").textContent =
+    dark ? "ALERT" : "STANDARD";
+}
+
+/* BACKGROUND PARTICLES */
+const canvas = document.getElementById("bg");
+const ctx = canvas.getContext("2d");
+
+function resize() {
+  canvas.width = innerWidth;
+  canvas.height = innerHeight;
+}
+resize();
+addEventListener("resize", resize);
+
+const dots = Array.from({ length: 140 }, () => ({
+  x: Math.random() * canvas.width,
+  y: Math.random() * canvas.height,
+  v: Math.random() * 0.4 + 0.1
+}));
+
+function animate() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.fillStyle = "#ffffff88";
+  dots.forEach(d => {
+    d.y += d.v;
+    if (d.y > canvas.height) d.y = 0;
+    ctx.fillRect(d.x, d.y, 2, 2);
+  });
+  requestAnimationFrame(animate);
+}
+animate();
+</script>
+
+</body>
+</html>
